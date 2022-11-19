@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  rest:
+    container_name: 'tubes2-rest'
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '3001:3000'
+    stdin_open: true
+    tty: true
+    networks:
+      - rest-network
+    restart: always
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:15-alpine
+    container_name: 'tubes2-rest-db'
+    environment:
+      - POSTGRES_DB=binotify_rest
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/rest-dump.sql:/docker-entrypoint-initdb.d/rest-dump.sql
+    ports:
+      - '54321:5432'
+    tty: true
+    restart: unless-stopped
+    networks:
+      - rest-network
+
+volumes:
+  node_modules:
+  db_data:
+
+networks:
+  rest-network:
+    driver: bridge
