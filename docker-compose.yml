@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   rest:
-    container_name: 'tubes2-rest'
+    container_name: 'tubes2-rest-ws'
     build: .
     volumes:
       - .:/app

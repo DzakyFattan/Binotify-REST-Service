@@ -1,15 +1,23 @@
 const { Router } = require('express');
 const controller = require('./controller');
-const router = Router();
+const soapController = require('./soapController');
 const jwt = require('jsonwebtoken');
 const config = require('./config/default.js');
 
+const router = Router();
+
 // router.get('/', () => { controller.getUsers(); });
 
+router.post('/login', controller.login);
 router.get('/getUsers', authenticateToken, controller.getUsers);
 router.get('/getUser/:userid', authenticateToken, controller.getUserById);
+router.get('/getSongs/:userid', authenticateToken, controller.getSongsFromUsers);
 router.post('/addUser', authenticateToken, controller.addUser);
-router.post('/login', controller.login);
+
+// SOAP
+router.post('/getSubRequests', authenticateToken, soapController.getSubRequests);
+router.post('/updateSub', authenticateToken, soapController.updateSub);
+router.post('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
 
 // implement authentication middleware here for now
 function authenticateToken(req, res, next) {
