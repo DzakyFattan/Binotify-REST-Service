@@ -9,11 +9,11 @@ const router = Router();
 
 // router.get('/', () => { controller.getUsers(); });
 
+router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.get('/getUsers', authenticateToken, userController.getUsers);
-router.post('/register', userController.register);
 
-router.get('/getSongs/', authenticateToken, songController.getSongs);
+router.get('/getSongs', authenticateToken, songController.getSongs);
 router.post('/addSong', authenticateToken, songController.addSong);
 router.post('/updateSong', authenticateToken, songController.updateSong);
 router.post('/removeSong', authenticateToken, songController.removeSong);
