@@ -1,5 +1,6 @@
 const { Router } = require('express');
-const controller = require('./controller');
+const userController = require('./userController');
+const songController = require('./songController');
 const soapController = require('./soapController');
 const jwt = require('jsonwebtoken');
 const config = require('./config/default.js');
@@ -8,10 +9,14 @@ const router = Router();
 
 // router.get('/', () => { controller.getUsers(); });
 
-router.post('/login', controller.login);
-router.get('/getUsers', authenticateToken, controller.getUsers);
-router.get('/getUser/:userid', authenticateToken, controller.getUserById);
-router.post('/addUser', authenticateToken, controller.addUser);
+router.post('/login', userController.login);
+router.get('/getUsers', authenticateToken, userController.getUsers);
+router.post('/register', userController.register);
+
+router.get('/getSongs/', authenticateToken, songController.getSongs);
+router.post('/addSong', authenticateToken, songController.addSong);
+router.post('/updateSong', authenticateToken, songController.updateSong);
+router.post('/removeSong', authenticateToken, songController.removeSong);
 
 // SOAP
 router.post('/getSubRequests', authenticateToken, soapController.getSubRequests);

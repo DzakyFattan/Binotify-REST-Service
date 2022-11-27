@@ -14,7 +14,11 @@ const getSubRequests = async (req, res) => {
         let response = await soap.SOAPRequest('getSub', apikey, payload);
         // console.log(response);
         var list = [];
-        if (response.status != '404') {
+        if (response.status == '401') {
+            res.status(401).json({ message: 'Unauthorized' });
+        } else if (response.status == '404') {
+            res.status(404).json( { message: 'Not Found' });
+        } else {
             var result = response.content.value;
             if (typeof result == 'string') {
                 var splitted = result.split(',');
@@ -35,8 +39,8 @@ const getSubRequests = async (req, res) => {
                     list.push(obj);
                 }
             }
+            res.status(200).json(list);
         }
-        res.status(200).json(list);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -53,7 +57,9 @@ const updateSub = async (req, res) => {
         };
         let response = await soap.SOAPRequest('updateSub', apikey, payload);
         // console.log(response);
-        if (response.status == '404') {
+        if (response.status == '401') {
+            res.status(401).json({ message: 'Unauthorized' });
+        } else if (response.status == '404') {
             res.status(404).json({ message: 'Not found' });
         } else if (response.status == '200') {
             res.status(200).json({ message: 'Sub request updated' });
@@ -74,13 +80,18 @@ const getPremiumSongs = async (req, res) => {
         };
         let response = await soap.SOAPRequest('getSub', apikey, payload);
         // console.log(response);
-        if (response.status != '404') {
+        if (response.status == '401') {
+            res.status(401).json({ message: 'Unauthorized' });
+        } else if (response.status == '404') {
+            res.status(404).json({ message: 'Not found' });
+        } else {
             var result = response.content.value.split(',');
             pool.query(queries.getSongsFromUsers, [result[1]], (error, results) => {
+                if (error) {
+                    throw error;
+                }
                 res.status(200).json(results.rows);
             });
-        } else {
-            res.status(404).json({ message: 'Not found' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
