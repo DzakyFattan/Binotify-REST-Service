@@ -11,7 +11,6 @@ const router = Router();
 router.post('/login', controller.login);
 router.get('/getUsers', authenticateToken, controller.getUsers);
 router.get('/getUser/:userid', authenticateToken, controller.getUserById);
-router.get('/getSongs/:userid', authenticateToken, controller.getSongsFromUsers);
 router.post('/addUser', authenticateToken, controller.addUser);
 
 // SOAP

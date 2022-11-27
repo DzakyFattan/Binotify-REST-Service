@@ -34,18 +34,6 @@ const getUserById = async (req, res) => {
     }
 };
 
-const getSongsFromUsers = async (req, res) => {
-    // console.log('querying songs from users..');
-    const id_penyanyi = parseInt(req.params.userid);
-    try {
-        pool.query(queries.getSongsFromUsers, [id_penyanyi], (error, results) => {
-            res.status(200).json(results.rows);
-        });
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-};
-
 const addUser = async (req, res) => {
     // // console.log('adding a user..');
     const {email, pass_user, username, name_user, isadmin} = req.body;
@@ -69,5 +57,4 @@ module.exports = {
     getUsers,
     getUserById,
     addUser,
-    getSongsFromUsers,
 };
