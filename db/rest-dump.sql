@@ -5,7 +5,7 @@
 -- Dumped from database version 15.1
 -- Dumped by pg_dump version 15.0
 
--- Started on 2022-11-27 16:36:01
+-- Started on 2022-11-28 23:59:05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,7 +20,7 @@ SET row_security = off;
 
 -- DROP DATABASE binotify_rest;
 --
--- TOC entry 3351 (class 1262 OID 16384)
+-- TOC entry 3352 (class 1262 OID 16384)
 -- Name: binotify_rest; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -53,7 +53,7 @@ SET row_security = off;
 ALTER SCHEMA public OWNER TO pg_database_owner;
 
 --
--- TOC entry 3352 (class 0 OID 0)
+-- TOC entry 3353 (class 0 OID 0)
 -- Dependencies: 4
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
 --
@@ -97,7 +97,7 @@ CREATE SEQUENCE public.binotify_songs_id_song_seq
 ALTER TABLE public.binotify_songs_id_song_seq OWNER TO postgres;
 
 --
--- TOC entry 3353 (class 0 OID 0)
+-- TOC entry 3354 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: binotify_songs_id_song_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -116,14 +116,14 @@ CREATE TABLE public.binotify_user (
     pass_user character varying(256) NOT NULL,
     username character varying(256) NOT NULL,
     name_user character varying(256) NOT NULL,
-    isadmin boolean NOT NULL
+    isadmin boolean DEFAULT false NOT NULL
 );
 
 
 ALTER TABLE public.binotify_user OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 16394)
+-- TOC entry 217 (class 1259 OID 16395)
 -- Name: binotify_user_id_user_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -139,7 +139,7 @@ CREATE SEQUENCE public.binotify_user_id_user_seq
 ALTER TABLE public.binotify_user_id_user_seq OWNER TO postgres;
 
 --
--- TOC entry 3354 (class 0 OID 0)
+-- TOC entry 3355 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: binotify_user_id_user_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -148,7 +148,7 @@ ALTER SEQUENCE public.binotify_user_id_user_seq OWNED BY public.binotify_user.id
 
 
 --
--- TOC entry 3193 (class 2604 OID 16395)
+-- TOC entry 3193 (class 2604 OID 16396)
 -- Name: binotify_songs id_song; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -156,7 +156,7 @@ ALTER TABLE ONLY public.binotify_songs ALTER COLUMN id_song SET DEFAULT nextval(
 
 
 --
--- TOC entry 3194 (class 2604 OID 16396)
+-- TOC entry 3194 (class 2604 OID 16397)
 -- Name: binotify_user id_user; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -164,52 +164,45 @@ ALTER TABLE ONLY public.binotify_user ALTER COLUMN id_user SET DEFAULT nextval('
 
 
 --
--- TOC entry 3342 (class 0 OID 16385)
+-- TOC entry 3343 (class 0 OID 16385)
 -- Dependencies: 214
 -- Data for Name: binotify_songs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.binotify_songs (id_song, judul, id_penyanyi, audio_path) FROM stdin;
-1	Umapyoi Mayano	1	/src/assets/Umapyoi.txt
-2	Umapyoi Eishin	2	/src/assets/Umapyoi.txt
-3	Umapyoi Eishin Megamix	2	/src/assets/Umapyoi.txt
-4	Umapyoi Eishin Ultra	2	/src/assets/Umapyoi.txt
 \.
 
 
 --
--- TOC entry 3344 (class 0 OID 16389)
+-- TOC entry 3345 (class 0 OID 16389)
 -- Dependencies: 216
 -- Data for Name: binotify_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.binotify_user (id_user, email, pass_user, username, name_user, isadmin) FROM stdin;
-2	eishin@fla.sh	U2FsdGVkX1+ti+Vl6q6W+eGCjUINiSSNF0EBz6pw2rM=	Eishin	Eishin Flash	f
-3	kitasan@bla.ck	U2FsdGVkX18i/+eibpfLxovYy7SIrI25C1nfFEAdZys=	Kitasan	Kitasan Black	f
-1	mayano@top.gun	U2FsdGVkX1+u5UWlCnNLKU6p8GTs/ioxvDkOC5Nkc5o=	Mayano	Mayano Top Gun	t
 \.
 
 
 --
--- TOC entry 3355 (class 0 OID 0)
+-- TOC entry 3356 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: binotify_songs_id_song_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.binotify_songs_id_song_seq', 4, true);
+SELECT pg_catalog.setval('public.binotify_songs_id_song_seq', 1, false);
 
 
 --
--- TOC entry 3356 (class 0 OID 0)
+-- TOC entry 3357 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: binotify_user_id_user_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.binotify_user_id_user_seq', 3, true);
+SELECT pg_catalog.setval('public.binotify_user_id_user_seq', 1, false);
 
 
 --
--- TOC entry 3196 (class 2606 OID 16398)
+-- TOC entry 3197 (class 2606 OID 16399)
 -- Name: binotify_songs binotify_songs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -218,7 +211,7 @@ ALTER TABLE ONLY public.binotify_songs
 
 
 --
--- TOC entry 3198 (class 2606 OID 16400)
+-- TOC entry 3199 (class 2606 OID 16401)
 -- Name: binotify_user binotify_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -227,7 +220,7 @@ ALTER TABLE ONLY public.binotify_user
 
 
 --
--- TOC entry 3199 (class 2606 OID 16401)
+-- TOC entry 3200 (class 2606 OID 16402)
 -- Name: binotify_songs fk_penyanyi; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -235,7 +228,7 @@ ALTER TABLE ONLY public.binotify_songs
     ADD CONSTRAINT fk_penyanyi FOREIGN KEY (id_penyanyi) REFERENCES public.binotify_user(id_user) ON DELETE CASCADE;
 
 
--- Completed on 2022-11-27 16:36:01
+-- Completed on 2022-11-28 23:59:05
 
 --
 -- PostgreSQL database dump complete

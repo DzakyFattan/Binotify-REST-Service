@@ -5,20 +5,22 @@ const queries = require('./queries');
 const getSubRequests = async (req, res) => {
     // console.log('querying sub requests..');
     try {
-        const { apikey, creator_id, subscriber_id, status } = req.body;
+        const { creator_id, subscriber_id, status } = req.body;
         const payload = {
             'arg0': creator_id,
             'arg1': subscriber_id,
             'arg2': status
         };
-        let response = await soap.SOAPRequest('getSub', apikey, payload);
+        let response = await soap.SOAPRequest('getSub', req.apikey, payload);
         // console.log(response);
-        var list = [];
         if (response.status == '401') {
             res.status(401).json({ message: 'Unauthorized' });
         } else if (response.status == '404') {
-            res.status(404).json( { message: 'Not Found' });
+            res.status(404).json({ message: 'Not Found' });
+        } else if (response.status == '500') {
+            res.status(500).json({ message: 'Internal Server Error' });
         } else {
+            var list = [];
             var result = response.content.value;
             if (typeof result == 'string') {
                 var splitted = result.split(',');
@@ -49,20 +51,32 @@ const getSubRequests = async (req, res) => {
 const updateSub = async (req, res) => {
     // console.log('updating sub request..');
     try {
-        const { apikey, creator_id, subscriber_id, status } = req.body;
-        const payload = {
+        const { creator_id, subscriber_id, status } = req.body;
+        const checkPayload = {
             'arg0': creator_id,
             'arg1': subscriber_id,
-            'arg2': status
+            'arg2': null
         };
-        let response = await soap.SOAPRequest('updateSub', apikey, payload);
-        // console.log(response);
-        if (response.status == '401') {
+        let checkSub = await soap.SOAPRequest('getSub', req.apikey, checkPayload);
+        if (checkSub.status == '401') {
             res.status(401).json({ message: 'Unauthorized' });
-        } else if (response.status == '404') {
-            res.status(404).json({ message: 'Not found' });
-        } else if (response.status == '200') {
-            res.status(200).json({ message: 'Sub request updated' });
+        } else if (checkSub.status == '404') {
+            res.status(404).json({ message: 'Not Found' });
+        } else if (checkSub.status == '500') {
+            res.status(500).json({ message: 'Internal Server Error' });
+        } else {
+            const payload = {
+                'arg0': creator_id,
+                'arg1': subscriber_id,
+                'arg2': status
+            };
+            let response = await soap.SOAPRequest('updateSub', req.apikey, payload);
+            // console.log(response);
+            if (response.status == '500') {
+                res.status(500).json({ message: 'Internal Server Error' });
+            } else {
+                res.status(200).json({ message: 'Subscribe Request Updated' });
+            }
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -72,26 +86,24 @@ const updateSub = async (req, res) => {
 const getPremiumSongs = async (req, res) => {
     // console.log('querying premium songs..');
     try {
-        const { apikey, creator_id, subscriber_id } = req.body;
+        const { creator_id, subscriber_id } = req.body;
         const payload = {
             'arg0': creator_id,
             'arg1': subscriber_id,
             'arg2': "ACCEPTED"
         };
-        let response = await soap.SOAPRequest('getSub', apikey, payload);
+        let response = await soap.SOAPRequest('getSub', req.apikey, payload);
         // console.log(response);
         if (response.status == '401') {
             res.status(401).json({ message: 'Unauthorized' });
         } else if (response.status == '404') {
             res.status(404).json({ message: 'Not found' });
+        } else if (response.status == '500') {
+            res.status(500).json({ message: 'Internal Server Error' });
         } else {
             var result = response.content.value.split(',');
-            pool.query(queries.getSongsFromUsers, [result[1]], (error, results) => {
-                if (error) {
-                    throw error;
-                }
-                res.status(200).json(results.rows);
-            });
+            let songs = await pool.query(queries.getSongsFromUsers, [result[1]]);
+            res.status(200).json(songs.rows);
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
