@@ -12,7 +12,7 @@ services:
     stdin_open: true
     tty: true
     networks:
-      - rest-network
+      - tubes2-network
     restart: always
     depends_on:
       - db
@@ -32,12 +32,13 @@ services:
     tty: true
     restart: unless-stopped
     networks:
-      - rest-network
+      - tubes2-network
 
 volumes:
   node_modules:
   db_data:
 
 networks:
-  rest-network:
+  tubes2-network:
+    name: tubes2-network
     driver: bridge

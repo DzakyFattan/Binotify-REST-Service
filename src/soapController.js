@@ -5,6 +5,9 @@ const queries = require('./queries');
 const getSubRequests = async (req, res) => {
     // console.log('querying sub requests..');
     try {
+        if (!req.isadmin) {
+            res.status(401).json({ message: 'Unauthorized' });
+        }
         const { creator_id, subscriber_id, status } = req.body;
         const payload = {
             'arg0': creator_id,
@@ -51,6 +54,9 @@ const getSubRequests = async (req, res) => {
 const updateSub = async (req, res) => {
     // console.log('updating sub request..');
     try {
+        if (!req.isadmin) {
+            res.status(401).json({ message: 'Unauthorized' });
+        }
         const { creator_id, subscriber_id, status } = req.body;
         const checkPayload = {
             'arg0': creator_id,
@@ -102,7 +108,7 @@ const getPremiumSongs = async (req, res) => {
             res.status(500).json({ message: 'Internal Server Error' });
         } else {
             var result = response.content.value.split(',');
-            let songs = await pool.query(queries.getSongsFromUsers, [result[1]]);
+            let songs = await pool.query(queries.getSongAndArtistNameByArtistID, [result[1]]);
             res.status(200).json(songs.rows);
         }
     } catch (error) {

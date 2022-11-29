@@ -11,6 +11,9 @@ app.get('/', (req, res) => {
 
 app.use('/api', routes);
 
+// static files
+app.use('/song', express.static('song'));
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -1,3 +1,4 @@
+const express = require('express');
 const { Router } = require('express');
 const userController = require('./userController');
 const songController = require('./songController');
@@ -7,8 +8,18 @@ const config = require('./config/default.js');
 const queries = require('./queries');
 const pool = require('./db');
 const soap = require('./soapRequest');
-
 const router = Router();
+const multer = require('multer');
+const filecfg = multer.diskStorage({
+    filename: (req, file, cb) => {
+        // random name
+        cb(null, Date.now() + '-' + file.originalname);
+    },
+    destination: (req, file, cb) => {
+        cb(null, 'song/');
+    }
+});
+const upload = multer({ storage: filecfg })
 
 // router.get('/', () => { controller.getUsers(); });
 
@@ -17,8 +28,8 @@ router.post('/login', userController.login);
 router.get('/getUsers', authenticateToken, userController.getUsers);
 
 router.get('/getSongs', authenticateToken, songController.getSongs);
-router.post('/addSong', authenticateToken, songController.addSong);
-router.post('/updateSong', authenticateToken, songController.updateSong);
+router.post('/addSong', authenticateToken, upload.single('audio_file'), songController.addSong); 
+router.post('/updateSong', authenticateToken, upload.single('audio_file'), songController.updateSong);
 router.post('/removeSong', authenticateToken, songController.removeSong);
 
 // SOAP
@@ -26,16 +37,14 @@ router.post('/getSubRequests', authenticateToken, soapController.getSubRequests)
 router.post('/updateSub', authenticateToken, soapController.updateSub);
 router.post('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
 
+// public static file
+
 // implement authentication middleware here for now
 async function authenticateToken(req, res, next) {
-    const token = req.headers['authorization'];
     // if admin, then next()
     try {
-        if (token == config.admin_token) {
-            req.user = config.admin_token;
-            req.apikey = config.RESTAPIKey;
-            next();
-        } else if (token == null) {
+        const token = req.headers['authorization'];
+        if (token == null) {
             return res.status(401).json({ message: 'Unauthorized' });
         } else {
             let username = jwt.verify(token, config.access_token_secret);
@@ -43,12 +52,12 @@ async function authenticateToken(req, res, next) {
             if (id_user.rows.length > 0) {
                 req.user = username.name;
                 req.user_id = id_user.rows[0].id_user;
+                req.apikey = config.RESTAPIKey;
                 if (id_user.rows[0].isadmin) {
-                    req.apikey = config.RESTAPIKey;
+                    req.isadmin = true;
                 } else {
-                    const getkey = await soap.APIKeyRequest('getAPIKey', { 'arg0': id_user.rows[0].id_user });
-                    req.apikey = getkey.content.value;
-                };
+                    req.isadmin = false;
+                }
                 next();
             } else {
                 return res.status(401).json({ message: 'Unauthorized' });
