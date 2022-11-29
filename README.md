@@ -27,8 +27,10 @@ Endpoints         | Method | Description
 
 ## Pembagian Tugas
 0. Readme ini: **13520003**
-1. Setup, Routing, Database, Dockerize: **13520003**
+1. Setup, Routing: **13520003**
 2. Fungsi Kredensial (*register, login*): **13520003**
 3. Fungsi *CRUD* pada lagu milik pengguna: **13520003** 
 4. SOAP Service untuk fungsi administrasi (`/getSubRequests`, `/updateSub`): **13520003**
 5. SOAP Service mengembalikan daftar lagu premium (`/getPremiumSongs`): **13520003**
+6. Database: **13520003**, **13520157**
+7. Dockerize: **13520003**, **13520157** 

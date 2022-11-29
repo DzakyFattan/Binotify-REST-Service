@@ -107,9 +107,20 @@ const getPremiumSongs = async (req, res) => {
         } else if (response.status == '500') {
             res.status(500).json({ message: 'Internal Server Error' });
         } else {
-            var result = response.content.value.split(',');
-            let songs = await pool.query(queries.getSongAndArtistNameByArtistID, [result[1]]);
-            res.status(200).json(songs.rows);
+            let songlist = [];
+            let result = response.content.value;
+            if (typeof result == 'string') {
+                var splitted = result.split(',');
+                let song = await pool.query(queries.getSongAndArtistNameByArtistID, [splitted[1]]);
+                songlist.push(song);
+            } else {
+                for (let i = 0; i < result.length; i++) {
+                    var splitted = result[i].split(',');
+                    let song = await pool.query(queries.getSongAndArtistNameByArtistID, [splitted[1]]);
+                    songlist.push(song);
+                }
+            }
+            res.status(200).json(songlist);
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
