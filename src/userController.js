@@ -77,7 +77,7 @@ const register = async (req, res) => {
 const getUsers = async (req, res) => {
     // console.log('querying users..');
     try {
-        pool.query(queries.getUsers, (error, results) => {
+        pool.query(queries.getUsersWithoutAdmin, (error, results) => {
             if (error) {
                 throw error;
             }
