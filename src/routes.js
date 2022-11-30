@@ -1,4 +1,3 @@
-const express = require('express');
 const { Router } = require('express');
 const userController = require('./userController');
 const songController = require('./songController');
@@ -7,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const config = require('./config/default.js');
 const queries = require('./queries');
 const pool = require('./db');
-const soap = require('./soapRequest');
 const router = Router();
 const multer = require('multer');
 const filecfg = multer.diskStorage({
@@ -25,7 +23,7 @@ const upload = multer({ storage: filecfg })
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
-router.get('/getUsers', authenticateToken, userController.getUsers);
+router.get('/getUsers', userController.getUsers);
 
 router.get('/getSongs', authenticateToken, songController.getSongs);
 router.post('/addSong', authenticateToken, upload.single('audio_file'), songController.addSong); 
@@ -35,7 +33,7 @@ router.post('/removeSong', authenticateToken, songController.removeSong);
 // SOAP
 router.post('/getSubRequests', authenticateToken, soapController.getSubRequests);
 router.post('/updateSub', authenticateToken, soapController.updateSub);
-router.post('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
+router.post('/getPremiumSongs', soapController.getPremiumSongs);
 
 // public static file
 

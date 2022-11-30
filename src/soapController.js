@@ -1,6 +1,7 @@
 const soap = require('./soapRequest');
 const pool = require('./db');
 const queries = require('./queries');
+const config = require('./config/default.js');
 
 const getSubRequests = async (req, res) => {
     // console.log('querying sub requests..');
@@ -98,7 +99,7 @@ const getPremiumSongs = async (req, res) => {
             'arg1': subscriber_id,
             'arg2': "ACCEPTED"
         };
-        let response = await soap.SOAPRequest('getSub', req.apikey, payload);
+        let response = await soap.SOAPRequest('getSub', config.RESTAPIKey, payload);
         // console.log(response);
         if (response.status == '401') {
             res.status(401).json({ message: 'Unauthorized' });

@@ -1,7 +1,7 @@
 const pool = require('./db');
 const queries = require('./queries');
-const config = require('./config/default.js');
 const fs = require('fs');
+
 const getSongs = async (req, res) => {
     // console.log('getting song list..');
     //console.log(req.user.name);
