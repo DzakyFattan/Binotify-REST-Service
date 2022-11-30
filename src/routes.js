@@ -31,9 +31,9 @@ router.post('/updateSong', authenticateToken, upload.single('audio_file'), songC
 router.post('/removeSong', authenticateToken, songController.removeSong);
 
 // SOAP
-router.post('/getSubRequests', authenticateToken, soapController.getSubRequests);
+router.get('/getSubRequests', authenticateToken, soapController.getSubRequests);
 router.post('/updateSub', authenticateToken, soapController.updateSub);
-router.post('/getPremiumSongs', soapController.getPremiumSongs);
+router.get('/getPremiumSongs', soapController.getPremiumSongs);
 
 // public static file
 

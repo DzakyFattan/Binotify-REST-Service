@@ -9,11 +9,11 @@ const getSubRequests = async (req, res) => {
         if (!req.isadmin) {
             res.status(401).json({ message: 'Unauthorized' });
         }
-        const { creator_id, subscriber_id, status } = req.body;
+        // const { creator_id, subscriber_id, status } = req.body;
         const payload = {
-            'arg0': creator_id,
-            'arg1': subscriber_id,
-            'arg2': status
+            'arg0': req.query.creator_id,
+            'arg1': req.query.subscriber_id,
+            'arg2': req.query.status
         };
         let response = await soap.SOAPRequest('getSub', req.apikey, payload);
         // console.log(response);
@@ -93,10 +93,10 @@ const updateSub = async (req, res) => {
 const getPremiumSongs = async (req, res) => {
     // console.log('querying premium songs..');
     try {
-        const { creator_id, subscriber_id } = req.body;
+        // const { creator_id, subscriber_id } = req.body;
         const payload = {
-            'arg0': creator_id,
-            'arg1': subscriber_id,
+            'arg0': req.query.creator_id,
+            'arg1': req.query.subscriber_id,
             'arg2': "ACCEPTED"
         };
         let response = await soap.SOAPRequest('getSub', config.RESTAPIKey, payload);
