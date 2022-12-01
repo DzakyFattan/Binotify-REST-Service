@@ -30,7 +30,6 @@ const getSubRequests = async (req, res) => {
             if (typeof result == 'string') {
                 var splitted = result.split(',');
                 var creator_info = await pool.query(queries.getUserByID, [parseInt(splitted[1])]);
-                var subscriber_info = await pool.query(queries.getUserByID, [parseInt(splitted[2])]);
                 var obj = {
                     'creator_info': {
                         id_user: creator_info.rows[0].id_user,
@@ -40,11 +39,7 @@ const getSubRequests = async (req, res) => {
                         isadmin: creator_info.rows[0].isadmin
                     },
                     'subscriber_info': {
-                        id_user: subscriber_info.rows[0].id_user,
-                        email: subscriber_info.rows[0].email,
-                        username: subscriber_info.rows[0].username,
-                        name_user: subscriber_info.rows[0].name_user,
-                        isadmin: subscriber_info.rows[0].isadmin
+                        id_user: splitted[2]
                     },
                     'status': splitted[3]
                 };
@@ -53,7 +48,6 @@ const getSubRequests = async (req, res) => {
                 for (let i = 0; i < result.length; i++) {
                     var splitted = result[i].split(',');
                     var creator_info = await pool.query(queries.getUserByID, [parseInt(splitted[1])]);
-                    var subscriber_info = await pool.query(queries.getUserByID, [parseInt(splitted[2])]);
                     var obj = {
                         'creator_info': {
                             id_user: creator_info.rows[0].id_user,
@@ -63,11 +57,7 @@ const getSubRequests = async (req, res) => {
                             isadmin: creator_info.rows[0].isadmin
                         },
                         'subscriber_info': {
-                            id_user: subscriber_info.rows[0].id_user,
-                            email: subscriber_info.rows[0].email,
-                            username: subscriber_info.rows[0].username,
-                            name_user: subscriber_info.rows[0].name_user,
-                            isadmin: subscriber_info.rows[0].isadmin
+                            id_user: splitted[2]
                         },
                         'status': splitted[3]
                     };

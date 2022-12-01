@@ -35,6 +35,13 @@ router.get('/getSubRequests', authenticateToken, soapController.getSubRequests);
 router.post('/updateSub', authenticateToken, soapController.updateSub);
 router.get('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
 
+// testing
+router.post('/test', async (req, res) => {
+    console.log(req.body);
+    console.log(req.headers)
+    res.send('test');
+});
+
 // public static file
 
 // implement authentication middleware here for now
