@@ -77,22 +77,17 @@ const register = async (req, res) => {
 const getUsers = async (req, res) => {
     // console.log('querying users..');
     try {
-        pool.query(queries.getUsersWithoutAdmin, (error, results) => {
-            if (error) {
-                throw error;
+        let fetched = await pool.query(queries.getUsersWithoutAdmin)
+        const users = fetched.rows.map(user => {
+            return {
+                id_user: user.id_user,
+                email: user.email,
+                username: user.username,
+                name_user: user.name_user,
+                isadmin: user.isadmin
             }
-            // mapping results to a new array
-            const users = results.rows.map((user) => {
-                return {
-                    id_user: user.id_user,
-                    email: user.email,
-                    username: user.username,
-                    name_user: user.name_user,
-                    isadmin: user.isadmin
-                };
-            });
-            res.status(200).json(users);
         });
+        res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -11,5 +11,9 @@ create table if not exists binotify_songs (
     id_song serial primary key not null,
     judul varchar(64) not null,
     id_penyanyi integer not null,
-    audio_path varchar(256) not null
+    audio_path varchar(256) not null,
+    constraint fk_penyanyi 
+        foreign key (id_penyanyi) 
+        references binotify_user(id_user)
+        on delete cascade
 )
