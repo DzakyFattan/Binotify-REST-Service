@@ -125,10 +125,10 @@ const updateSub = async (req, res) => {
 const getPremiumSongs = async (req, res) => {
     // console.log('querying premium songs..');
     try {
-        const { creator_id, subscriber_id } = req.body;
+        const { creator_id, subscriber_id } = req.query;
         const payload = {
-            'arg0': creator_id,
-            'arg1': subscriber_id,
+            'arg0': creator_id || null,
+            'arg1': subscriber_id || null,
             'arg2': "ACCEPTED"
         };
         let response = await soap.SOAPRequest('getSub', config.RESTAPIKey, payload);

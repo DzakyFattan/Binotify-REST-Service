@@ -30,7 +30,7 @@ const SOAPRequest = async (ns1, apikey, payload) => {
         var parser = new xml2js.Parser({ trim: true, explicitArray: false, explicitRoot: false, ignoreAttrs: true });
         var parseString = promisify(parser.parseString);
         let parsed = await parseString(result.data);
-        console.log(parsed["S:Body"][`ns2:${ns1}Response`].return);
+        // console.log(parsed["S:Body"][`ns2:${ns1}Response`].return);
         return parsed["S:Body"][`ns2:${ns1}Response`].return;
     } catch (error) {
         throw error;

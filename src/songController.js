@@ -10,7 +10,11 @@ const getSongs = async (req, res) => {
         if (id_song != null) {
             const song = await pool.query(queries.getSongAndArtistNameBySongID, [id_song]);
             if (song.rows.length > 0) {
-                res.status(200).json(song.rows);
+                if (song.rows[0].id_user == req.user_id) {
+                    res.status(200).json(song.rows);
+                } else {
+                    res.status(401).json({ message: 'Unauthorized' });
+                }
             } else {
                 res.status(404).json({ message: "No song found" });
             }
