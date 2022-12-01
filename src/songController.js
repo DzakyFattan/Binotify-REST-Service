@@ -6,8 +6,22 @@ const getSongs = async (req, res) => {
     // console.log('getting song list..');
     //console.log(req.user.name);
     try {
-        let results = await pool.query(queries.getSongAndArtistNameByArtistID, [req.user_id]);
-        res.status(200).json(results.rows);
+        let { id_song } = req.query;
+        if (id_song != null) {
+            const song = await pool.query(queries.getSongAndArtistNameBySongID, [id_song]);
+            if (song.rows.length > 0) {
+                res.status(200).json(song.rows);
+            } else {
+                res.status(404).json({ message: "No song found" });
+            }
+        } else {
+            let results = await pool.query(queries.getSongAndArtistNameByArtistID, [req.user_id]);
+            if (results.rows.length > 0) {
+                res.status(200).json(results.rows);
+            } else {
+                res.status(404).json({ message: 'No songs found' });
+            }
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -39,14 +53,14 @@ const updateSong = async (req, res) => { // use form-data
             res.status(400).json({ message: 'No data to update' });
         } else {
             let checkSong = await pool.query(queries.getSong, [id_song, req.user_id]);
-            console.log(checkSong.rows);
+            // console.log(checkSong.rows);
             if (checkSong.rows.length > 0) {
                 let query = "UPDATE binotify_songs SET ";
                 if (judul != null) {
                     query += "judul = '" + judul + "'";
                 }
                 if (req.file !== undefined) {
-                    console.log(checkSong.rows[0].audio_path);
+                    // console.log(checkSong.rows[0].audio_path);
                     fs.unlink(checkSong.rows[0].audio_path, (err) => {
                         if (err) {
                             throw err;

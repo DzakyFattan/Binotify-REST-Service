@@ -13,12 +13,19 @@ const login = async (req, res) => {
         if (id_user.rows.length > 0) {
             const pass_user = crypto.AES.decrypt(id_user.rows[0].pass_user, config.aes_key).toString(crypto.enc.Utf8);
             if (pass_user == password) {
+                const userObject =  {
+                    id_user: id_user.rows[0].id_user,
+                    email: id_user.rows[0].email,
+                    username: id_user.rows[0].username,
+                    name_user: id_user.rows[0].name_user,
+                    isadmin: id_user.rows[0].isadmin
+                }
                 if (id_user.rows[0].isadmin == true) {
                     const accessToken = jwt.sign({ name: username }, config.access_token_secret);
                     res.status(200).json({
                         message: 'Login Successful',
                         accessToken: accessToken,
-                        isAdmin: true
+                        ...userObject
                     });
                 } else {
                     const accessToken = jwt.sign({ name: username }, config.access_token_secret);
@@ -27,7 +34,7 @@ const login = async (req, res) => {
                         message: 'Login Successful',
                         accessToken: accessToken,
                         apiKey: getkey.content.value,
-                        isAdmin: false
+                        ...userObject
                     });
                 }
             } else {
@@ -61,8 +68,18 @@ const register = async (req, res) => {
                 if (response.status == '401') {
                     res.status(401).json({ message: 'Unauthorized' });
                 } else if (response.status == '200') {
+                    const userObject =  {
+                        id_user: id_user.rows[0].id_user,
+                        email: id_user.rows[0].email,
+                        username: id_user.rows[0].username,
+                        name_user: id_user.rows[0].name_user,
+                        isadmin: id_user.rows[0].isadmin
+                    }
                     res.status(201).json({
                         message: 'User added Successfully',
+                        accessToken: jwt.sign({ name: username }, config.access_token_secret),
+                        apiKey: response.content.value,
+                        ...userObject
                     });
                 } else if (response.status == '500') {
                     res.status(500).json({ message: 'Internal server error' });
@@ -77,17 +94,38 @@ const register = async (req, res) => {
 const getUsers = async (req, res) => {
     // console.log('querying users..');
     try {
-        let fetched = await pool.query(queries.getUsersWithoutAdmin)
-        const users = fetched.rows.map(user => {
-            return {
-                id_user: user.id_user,
-                email: user.email,
-                username: user.username,
-                name_user: user.name_user,
-                isadmin: user.isadmin
-            }
-        });
-        res.status(200).json(users);
+        const { username } = req.query;
+        if (username) {
+            let users = await pool.query(queries.getUserByUsername, [username]);
+            return res.status(200).json(users.rows.map (user => {
+                return {
+                    id_user: user.id_user,
+                    email: user.email,
+                    username: user.username,
+                    name_user: user.name_user,
+                    isadmin: user.isadmin
+                }
+            }));
+        } else if (req.isadmin){
+            pool.query(queries.getUsers, (error, results) => {
+                if (error) {
+                    throw error;
+                }
+                // mapping results to a new array
+                const users = results.rows.map((user) => {
+                    return {
+                        id_user: user.id_user,
+                        email: user.email,
+                        username: user.username,
+                        name_user: user.name_user,
+                        isadmin: user.isadmin
+                    };
+                });
+                res.status(200).json(users);
+            });
+        } else {
+            res.status(401).json({ message: 'Unauthorized' });
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

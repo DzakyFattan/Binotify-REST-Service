@@ -5,15 +5,16 @@ const config = require('./config/default.js');
 
 const getSubRequests = async (req, res) => {
     // console.log('querying sub requests..');
+    const { creator_id, subscriber_id, status } = req.query;
     try {
         if (!req.isadmin) {
             res.status(401).json({ message: 'Unauthorized' });
         }
-        // const { creator_id, subscriber_id, status } = req.body;
+        // url param
         const payload = {
-            'arg0': req.query.creator_id,
-            'arg1': req.query.subscriber_id,
-            'arg2': req.query.status
+            'arg0': creator_id || null,
+            'arg1': subscriber_id || null,
+            'arg2': status || null
         };
         let response = await soap.SOAPRequest('getSub', req.apikey, payload);
         // console.log(response);
@@ -28,18 +29,46 @@ const getSubRequests = async (req, res) => {
             var result = response.content.value;
             if (typeof result == 'string') {
                 var splitted = result.split(',');
+                var creator_info = await pool.query(queries.getUserByID, [parseInt(splitted[1])]);
+                var subscriber_info = await pool.query(queries.getUserByID, [parseInt(splitted[2])]);
                 var obj = {
-                    'creator_id': splitted[1],
-                    'subscriber_id': splitted[2],
+                    'creator_info': {
+                        id_user: creator_info.rows[0].id_user,
+                        email: creator_info.rows[0].email,
+                        username: creator_info.rows[0].username,
+                        name_user: creator_info.rows[0].name_user,
+                        isadmin: creator_info.rows[0].isadmin
+                    },
+                    'subscriber_info': {
+                        id_user: subscriber_info.rows[0].id_user,
+                        email: subscriber_info.rows[0].email,
+                        username: subscriber_info.rows[0].username,
+                        name_user: subscriber_info.rows[0].name_user,
+                        isadmin: subscriber_info.rows[0].isadmin
+                    },
                     'status': splitted[3]
                 };
                 list.push(obj);
             } else {
                 for (let i = 0; i < result.length; i++) {
                     var splitted = result[i].split(',');
+                    var creator_info = await pool.query(queries.getUserByID, [parseInt(splitted[1])]);
+                    var subscriber_info = await pool.query(queries.getUserByID, [parseInt(splitted[2])]);
                     var obj = {
-                        'creator_id': splitted[1],
-                        'subscriber_id': splitted[2],
+                        'creator_info': {
+                            id_user: creator_info.rows[0].id_user,
+                            email: creator_info.rows[0].email,
+                            username: creator_info.rows[0].username,
+                            name_user: creator_info.rows[0].name_user,
+                            isadmin: creator_info.rows[0].isadmin
+                        },
+                        'subscriber_info': {
+                            id_user: subscriber_info.rows[0].id_user,
+                            email: subscriber_info.rows[0].email,
+                            username: subscriber_info.rows[0].username,
+                            name_user: subscriber_info.rows[0].name_user,
+                            isadmin: subscriber_info.rows[0].isadmin
+                        },
                         'status': splitted[3]
                     };
                     list.push(obj);
@@ -59,6 +88,9 @@ const updateSub = async (req, res) => {
             res.status(401).json({ message: 'Unauthorized' });
         }
         const { creator_id, subscriber_id, status } = req.body;
+        if (!creator_id || !subscriber_id || !status) {
+            res.status(400).json({ message: 'Bad Request' });
+        }
         const checkPayload = {
             'arg0': creator_id,
             'arg1': subscriber_id,
@@ -93,10 +125,10 @@ const updateSub = async (req, res) => {
 const getPremiumSongs = async (req, res) => {
     // console.log('querying premium songs..');
     try {
-        // const { creator_id, subscriber_id } = req.body;
+        const { creator_id, subscriber_id } = req.body;
         const payload = {
-            'arg0': req.query.creator_id,
-            'arg1': req.query.subscriber_id,
+            'arg0': creator_id,
+            'arg1': subscriber_id,
             'arg2': "ACCEPTED"
         };
         let response = await soap.SOAPRequest('getSub', config.RESTAPIKey, payload);
@@ -113,12 +145,12 @@ const getPremiumSongs = async (req, res) => {
             if (typeof result == 'string') {
                 var splitted = result.split(',');
                 let song = await pool.query(queries.getSongAndArtistNameByArtistID, [splitted[1]]);
-                songlist.push(song);
+                songlist.push(song.rows);
             } else {
                 for (let i = 0; i < result.length; i++) {
                     var splitted = result[i].split(',');
                     let song = await pool.query(queries.getSongAndArtistNameByArtistID, [splitted[1]]);
-                    songlist.push(song);
+                    songlist.push(song.rows);
                 }
             }
             res.status(200).json(songlist);

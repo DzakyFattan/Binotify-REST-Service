@@ -21,6 +21,7 @@ module.exports = {
     addSong,
     getSongId,
     removeSong,
+    getUserByID,
     getSongAndArtistNameBySongID,
     getSongAndArtistNameByArtistID,
 };

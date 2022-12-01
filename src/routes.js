@@ -33,7 +33,7 @@ router.post('/removeSong', authenticateToken, songController.removeSong);
 // SOAP
 router.get('/getSubRequests', authenticateToken, soapController.getSubRequests);
 router.post('/updateSub', authenticateToken, soapController.updateSub);
-router.get('/getPremiumSongs', soapController.getPremiumSongs);
+router.get('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
 
 // public static file
 
