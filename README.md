@@ -20,9 +20,9 @@ Endpoints         | Method | Description
 `/addSong`        | POST   | Menambahkan lagu premium dari penyanyi
 `/updateSong`     | POST   | Menyunting atribut lagu (judul dan *path* menuju *file audio* lagu)
 `/removeSong`     | POST   | Menghapus lagu premium milik penyanyi
-`/getSubRequests` | POST   | (SOAP) Mengembalikan daftar *request subscribe* penyanyi dari pengguna
+`/getSubRequests` | GET    | (SOAP) Mengembalikan daftar *request subscribe* penyanyi dari pengguna
 `/updateSub`      | POST   | (SOAP) Memperbarui status *subscription* dari pengguna
-`/getPremiumSongs`| POST   | (SOAP) Mengembalikan daftar lagu premium dari penyanyi yang diikuti pengguna
+`/getPremiumSongs`| GET    | (SOAP) Mengembalikan daftar lagu premium dari penyanyi yang diikuti pengguna
 
 
 ## Pembagian Tugas
@@ -34,3 +34,4 @@ Endpoints         | Method | Description
 5. SOAP Service mengembalikan daftar lagu premium (`/getPremiumSongs`): **13520003**
 6. Database: **13520003**, **13520157**
 7. Dockerize: **13520003**, **13520157** 
+8. Integrasi Keseluruhan: **13520157**
