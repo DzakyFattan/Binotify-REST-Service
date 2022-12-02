@@ -83,3 +83,8 @@ const app_song = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports = {
+    app_singer,
+    app_song
+}
