@@ -29,7 +29,6 @@ const login = async (req, res) => {
                     });
                 } else {
                     const accessToken = jwt.sign({ name: username }, config.access_token_secret);
-                    let getkey = await soap.APIKeyRequest('getAPIKey', { 'arg0': id_user.rows[0].id_user });
                     res.status(200).json({
                         message: 'Login Successful',
                         accessToken: accessToken,
@@ -63,7 +62,6 @@ const register = async (req, res) => {
                 const pass_user = crypto.AES.encrypt(password, config.aes_key).toString();
                 let _ = await pool.query(queries.addUser, [email, pass_user, username, name_user]);
                 let id_user = await pool.query(queries.getUserByUsername, [username]);
-                let response = await soap.APIKeyRequest('addAPIKey', { 'arg0': id_user.rows[0].id_user });
                 // console.log(response);
                 if (response.status == '401') {
                     res.status(401).json({ message: 'Unauthorized' });
@@ -78,7 +76,6 @@ const register = async (req, res) => {
                     res.status(201).json({
                         message: 'User added Successfully',
                         accessToken: jwt.sign({ name: username }, config.access_token_secret),
-                        apiKey: response.content.value,
                         ...userObject
                     });
                 } else if (response.status == '500') {
@@ -97,31 +94,39 @@ const getUsers = async (req, res) => {
         const { username } = req.query;
         if (username) {
             let users = await pool.query(queries.getUserByUsername, [username]);
-            return res.status(200).json(users.rows.map (user => {
-                return {
-                    id_user: user.id_user,
-                    email: user.email,
-                    username: user.username,
-                    name_user: user.name_user,
-                    isadmin: user.isadmin
-                }
-            }));
-        } else if (req.isadmin){
-            pool.query(queries.getUsers, (error, results) => {
-                if (error) {
-                    throw error;
-                }
-                // mapping results to a new array
-                const users = results.rows.map((user) => {
+            if (users.rows.length > 0) {
+                res.status(200).json(users.rows.map (user => {
                     return {
                         id_user: user.id_user,
                         email: user.email,
                         username: user.username,
                         name_user: user.name_user,
                         isadmin: user.isadmin
-                    };
-                });
-                res.status(200).json(users);
+                    }
+                }));
+            } else {
+                res.status(404).json({ message: 'User does not exist' });
+            }
+        } else if (req.isadmin){
+            pool.query(queries.getUsers, (error, results) => {
+                if (error) {
+                    throw error;
+                }
+                // mapping results to a new array
+                if (results.rows.length > 0) {
+                    const users = results.rows.map((user) => {
+                        return {
+                            id_user: user.id_user,
+                            email: user.email,
+                            username: user.username,
+                            name_user: user.name_user,
+                            isadmin: user.isadmin
+                        };
+                    });
+                    res.status(200).json(users);
+                } else {
+                    res.status(404).json({ message: 'No users found' });
+                }
             });
         } else {
             res.status(401).json({ message: 'Unauthorized' });

@@ -1,7 +1,9 @@
+const express = require('express');
 const { Router } = require('express');
 const userController = require('./userController');
 const songController = require('./songController');
 const soapController = require('./soapController');
+const appController = require('./appController');
 const jwt = require('jsonwebtoken');
 const config = require('./config/default.js');
 const queries = require('./queries');
@@ -35,6 +37,10 @@ router.get('/getSubRequests', authenticateToken, soapController.getSubRequests);
 router.post('/updateSub', authenticateToken, soapController.updateSub);
 router.get('/getPremiumSongs', authenticateToken, soapController.getPremiumSongs);
 
+// Binotify App
+router.get("/app/singer", authenticateApp, appController.app_singer)
+router.get("/app/song", authenticateApp, appController.app_song)
+
 // testing
 router.post('/test', async (req, res) => {
     console.log(req.body);
@@ -42,7 +48,23 @@ router.post('/test', async (req, res) => {
     res.send('test');
 });
 
-// public static file
+// static files
+router.use('/song', express.static('song'));
+
+// auth app
+
+async function authenticateApp(req, res, next) {
+    try {
+        const token = req.headers['authorization'];
+        if (token === config.APPApiKey) {
+            next();
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        };
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    };
+}
 
 // implement authentication middleware here for now
 async function authenticateToken(req, res, next) {
