@@ -1,4 +1,4 @@
-const getUsersWithoutAdmin = "SELECT * FROM binotify_user WHERE NOT isadmin ORDER BY username ASC";
+const getUsers = "SELECT * FROM binotify_user ORDER BY username ASC"
 const getUserByUsername = "SELECT * FROM binotify_user WHERE username = $1";
 const checkEmailExists = "SELECT u FROM binotify_user u WHERE u.email = $1";
 const checkUsernameExists = "SELECT u FROM binotify_user u WHERE u.username = $1";
@@ -12,7 +12,7 @@ const getSongAndArtistNameBySongID = "SELECT s.*, u.name_user, u.id_user FROM bi
 const getSongAndArtistNameByArtistID = "SELECT s.*, u.name_user, u.id_user FROM binotify_songs s INNER JOIN binotify_user u ON s.id_penyanyi = u.id_user WHERE s.id_penyanyi = $1 ORDER BY s.judul ASC";
 
 module.exports = {
-    getUsersWithoutAdmin,
+    getUsers,
     getUserByUsername,
     checkEmailExists,
     checkUsernameExists,

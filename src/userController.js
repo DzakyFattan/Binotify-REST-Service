@@ -104,26 +104,20 @@ const getUsers = async (req, res) => {
                 res.status(404).json({ message: 'User does not exist' });
             }
         } else if (req.isadmin){
-            pool.query(queries.getUsersWithoutAdmin, (error, results) => {
-                if (error) {
-                    throw error;
-                }
-                // mapping results to a new array
-                if (results.rows.length > 0) {
-                    const users = results.rows.map((user) => {
-                        return {
-                            id_user: user.id_user,
-                            email: user.email,
-                            username: user.username,
-                            name_user: user.name_user,
-                            isadmin: user.isadmin
-                        };
-                    });
-                    res.status(200).json(users);
-                } else {
-                    res.status(404).json({ message: 'No users found' });
-                }
-            });
+            let users = await pool.query(queries.getUsers);
+            if (users.rows.length > 0) {
+                res.status(200).json(users.rows.map (user => {
+                    return {
+                        id_user: user.id_user,
+                        email: user.email,
+                        username: user.username,
+                        name_user: user.name_user,
+                        isadmin: user.isadmin
+                    };
+                }));
+            } else {
+                res.status(404).json({ message: 'No users found' });
+            }
         } else {
             res.status(401).json({ message: 'Unauthorized' });
         }
