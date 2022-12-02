@@ -1,5 +1,7 @@
 const pool = require('./db');
 const queries = require('./queries');
+const soap = require('./soapRequest');
+const config = require('./config/default.js');
 const app_singer = async (req, res) => {
     try {
         const { username } = req.query;
