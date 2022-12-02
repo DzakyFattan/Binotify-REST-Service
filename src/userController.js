@@ -3,7 +3,6 @@ const queries = require('./queries');
 const jwt = require('jsonwebtoken');
 const config = require('./config/default.js');
 const crypto = require('crypto-js');
-const soap = require('./soapRequest');
 
 const login = async (req, res) => {
     // Auth user
@@ -21,18 +20,15 @@ const login = async (req, res) => {
                     isadmin: id_user.rows[0].isadmin
                 }
                 if (id_user.rows[0].isadmin == true) {
-                    const accessToken = jwt.sign({ name: username }, config.access_token_secret);
                     res.status(200).json({
                         message: 'Login Successful',
-                        accessToken: accessToken,
+                        accessToken: jwt.sign({ name: username }, config.access_token_secret),
                         ...userObject
                     });
                 } else {
-                    const accessToken = jwt.sign({ name: username }, config.access_token_secret);
                     res.status(200).json({
                         message: 'Login Successful',
-                        accessToken: accessToken,
-                        apiKey: getkey.content.value,
+                        accessToken: jwt.sign({ name: username }, config.access_token_secret),
                         ...userObject
                     });
                 }

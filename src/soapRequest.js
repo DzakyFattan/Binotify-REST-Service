@@ -37,6 +37,7 @@ const SOAPRequest = async (ns1, apikey, payload) => {
     }
 };
 
+/* deprecated
 const APIKeyRequest = async (ns1, payload) => {
     try {
         var url = 'http://tubes2-soap-ws:2434/apikey';
@@ -68,9 +69,9 @@ const APIKeyRequest = async (ns1, payload) => {
     } catch (error) {
         throw error;
     }
-};
+}; */
 
 module.exports = {
     SOAPRequest,
-    APIKeyRequest
+    // APIKeyRequest
 };
