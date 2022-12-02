@@ -104,7 +104,7 @@ const getUsers = async (req, res) => {
                 res.status(404).json({ message: 'User does not exist' });
             }
         } else if (req.isadmin){
-            pool.query(queries.getUsers, (error, results) => {
+            pool.query(queries.getUsersWithoutAdmin, (error, results) => {
                 if (error) {
                     throw error;
                 }
